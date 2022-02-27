@@ -29,7 +29,7 @@ Before running this script, you must already have an image that you want to turn
 - This image's extension must be one off these extension: .png, .wpm or svg
 ### Packages (commands)
 - zenity (for `zenity` command)
-- imagemagick (for `convert` commant)
+- imagemagick (for `identify` and `convert` commands)
 
 ## Usage
 - step 1: get the executable or command you want to run
@@ -55,6 +55,7 @@ Before running this script, you must already have an image that you want to turn
 ### man pages
 - [die.net : imagemagick(1)](https://linux.die.net/man/1/imagemagick)
 - [die.net : convert(1)](https://linux.die.net/man/1/convert)
+- [legacy.imagemagick.org : identify format attribute](https://legacy.imagemagick.org/script/escape.php)
 ### Forums and Tutorials
 - [HowToGeek: How to Quicly Resize, Convert & Modify Images from the linux Terminal](https://www.howtogeek.com/109369/how-to-quickly-resize-convert-modify-images-from-the-linux-terminal/)
 

@@ -12,6 +12,7 @@
 # =[ VARIABLES ]====================================================================================
 folderPath="${HOME}/.local/share/applications/"
 folderName=""
+imagePath=""
 
 # =[ CHECK REQUIREMENT PACKAGES ]===================================================================
 function checkPackage(){
@@ -50,14 +51,23 @@ function askName(){
     echo ${compliantName}
 }
 
+# -[ SELECT ICONE ]---------------------------------------------------------------------------------
+function selectImage(){
+    imagePath=$(zenity --file-selection --title="Selectionner l'icône de l'application" --filename=/home/)
+    echo ${imagePath}
+}
+
 # ==================================================================================================
 # MAIN
 # ==================================================================================================
 
 echo -e "Check Requirements Packages:"
 checkPackage zenity               # CheckIf zenity cmd is available
+checkPackage identify imagemagick # CheckIf convert cmd from imagemagick package is available
 checkPackage convert imagemagick  # CheckIf convert cmd from imagemagick package is available
 echo -e "\nCreate Folder:"
 # ask a folder name while it's is empty or already taken
 while [ -e "${folderPath}${folderName}" ] || [ "${folderName}" == "" ] ;do folderName=$(askName);done
 createFolder ${folderName}
+# ask for a path to an image that can be used as an icon until it is
+while ! identify ${imagePath} &> /dev/null || [ "${imagePath}" == "" ] ;do imagePath=$(selectImage);done
