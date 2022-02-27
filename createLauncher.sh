@@ -5,9 +5,10 @@
 # ==================================================================================================
 
 # =[ ERRORS ]=======================================================================================
-# ERROR12 => checkPackage: invalid number of arguments
-# ERROR13 => createFolder: invalid number of arguments
-# ERROR14 => createFolder: folder to be created already exists
+# ERROR12 => checkPackage         : invalid number of arguments
+# ERROR13 => createFolder         : invalid number of arguments
+# ERROR14 => createFolder         : folder to be created already exists
+# ERROR15 => isNotASupportedFormat: invalid number of arguments
 
 # =[ VARIABLES ]====================================================================================
 folderPath="${HOME}/.local/share/applications/"
@@ -51,10 +52,25 @@ function askName(){
     echo ${compliantName}
 }
 
-# -[ SELECT ICONE ]---------------------------------------------------------------------------------
+# -[ SELECT IMAGE ]---------------------------------------------------------------------------------
 function selectImage(){
     imagePath=$(zenity --file-selection --title="Selectionner l'icône de l'application" --filename=/home/)
     echo ${imagePath}
+}
+
+# -[ CHECK IMAGE EXTENSION ]------------------------------------------------------------------------
+function isNotASupportedFormat(){
+    [[ $# -ne 1 ]] && { echo -e "ERROR15: createFolder() call failed, take only 1 argument, the image's path." ; exit 15 ; }
+    if identify $1 &> /dev/null;then
+        ext=$(identify -format '%m' ${1})
+        if [ "${ext}" = "JPEG" ] || [ "${ext}" = "XPM" ] || [ "${ext}" = "SVG" ] || [ "${ext}" = "PNG" ];then
+            return 1
+        else
+            return 0
+        fi
+    else
+        return 0
+    fi
 }
 
 # ==================================================================================================
@@ -70,4 +86,4 @@ echo -e "\nCreate Folder:"
 while [ -e "${folderPath}${folderName}" ] || [ "${folderName}" == "" ] ;do folderName=$(askName);done
 createFolder ${folderName}
 # ask for a path to an image that can be used as an icon until it is
-while ! identify ${imagePath} &> /dev/null || [ "${imagePath}" == "" ] ;do imagePath=$(selectImage);done
+while [ "${imagePath}" == "" ] || isNotASupportedFormat ${imagePath};do imagePath=$(selectImage);done

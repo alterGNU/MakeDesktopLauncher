@@ -36,6 +36,9 @@ Before running this script, you must already have an image that you want to turn
 - step 2: get the image you want to turn into an icon
 - step 3: execute createLauncher.sh and then follow his instructions...:)
 
+## Useful Commands
+- `convert -list Format` -> list of supported Format
+
 # Sources
 ## Bash-Scripting
 - [Advanced bash-scripting guide by@mandelCooper](https://tldp.org/LDP/abs/html/abs-guide.html)
