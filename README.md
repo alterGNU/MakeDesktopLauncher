@@ -31,6 +31,11 @@ Before running this script, you must already have an image that you want to turn
 - zenity (for `zenity` command)
 - imagemagick (for `convert` commant)
 
+## Usage
+- step 1: get the executable or command you want to run
+- step 2: get the image you want to turn into an icon
+- step 3: execute createLauncher.sh and then follow his instructions...:)
+
 # Sources
 ## Bash-Scripting
 - [Advanced bash-scripting guide by@mandelCooper](https://tldp.org/LDP/abs/html/abs-guide.html)
