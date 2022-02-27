@@ -1,0 +1,4 @@
+#Ignorer SWAP-FILES (fichiers de sauvegarde)
+*~
+*.swo
+*.swp
