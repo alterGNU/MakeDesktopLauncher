@@ -43,6 +43,7 @@ Before running this script, you must already have an image that you want to turn
 ## Bash-Scripting
 - [Advanced bash-scripting guide by@mandelCooper](https://tldp.org/LDP/abs/html/abs-guide.html)
 - [Advanced bash-scripting guide:CH24.Functions](https://tldp.org/LDP/abs/html/complexfunct.html)
+- [Pb:path with space doesn't work](https://stackoverflow.com/questions/589149/bash-script-to-cd-to-directory-with-spaces-in-pathname)
 
 ## Desktop Extension Format
 ### Specifications:

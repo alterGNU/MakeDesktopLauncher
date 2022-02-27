@@ -6,9 +6,6 @@
 
 # =[ ERRORS ]=======================================================================================
 # ERROR12 => checkPackage         : invalid number of arguments
-# ERROR13 => createFolder         : invalid number of arguments
-# ERROR14 => createFolder         : folder to be created already exists
-# ERROR15 => isNotASupportedFormat: invalid number of arguments
 
 # =[ VARIABLES ]====================================================================================
 folderPath="${HOME}/.local/share/applications/"
@@ -33,18 +30,6 @@ function checkPackage(){
     fi
 }
  
-# =[ CREATE FOLDER ]================================================================================
-function createFolder(){
-    [[ $# -ne 1 ]] && { echo -e "ERROR13: createFolder() call failed, take only 1 argument, the folder's name." ; exit 13 ; }
-    absolutePath="${folderPath}${1}/"
-    if [ -d ${absolutePath} ];then
-        echo "Error14: a folder with the same name already exists"
-        exit 14
-    else
-        mkdir -p ${absolutePath} -v
-    fi
-}
-
 # -[ ASK USER FOLDER'S NAME ]-----------------------------------------------------------------------
 function askName(){
     name=$(zenity --entry --title="Creating the launcher" --text="Enter the name of the application")
@@ -55,14 +40,13 @@ function askName(){
 # -[ SELECT IMAGE ]---------------------------------------------------------------------------------
 function selectImage(){
     imagePath=$(zenity --file-selection --title="Selectionner l'icône de l'application" --filename=/home/)
-    echo ${imagePath}
+    echo \"${imagePath}\"
 }
 
 # -[ CHECK IMAGE EXTENSION ]------------------------------------------------------------------------
 function isNotASupportedFormat(){
-    [[ $# -ne 1 ]] && { echo -e "ERROR15: createFolder() call failed, take only 1 argument, the image's path." ; exit 15 ; }
-    if identify $1 &> /dev/null;then
-        ext=$(identify -format '%m' ${1})
+    if eval identify ${@} &> /dev/null ;then
+        ext=$(eval identify -format '%m' ${@})
         if [ "${ext}" = "JPEG" ] || [ "${ext}" = "XPM" ] || [ "${ext}" = "SVG" ] || [ "${ext}" = "PNG" ];then
             return 1
         else
@@ -70,6 +54,25 @@ function isNotASupportedFormat(){
         fi
     else
         return 0
+    fi
+}
+
+# -[ CREATE ICON ]----------------------------------------------------------------------------------
+function createIcon(){
+    long=$(eval identify -format '%W' ${imagePath})
+    larg=$(eval identify -format '%H' ${imagePath})
+    if [ ${long} -gt 512 ] && [ ${larg} -gt 512 ];then
+        format=512x512
+        fileName="${folderPath}${folderName}/${folderName}_512x512.png"
+    elif [ ${long} -lt ${larg} ];then
+        format=${long}x${long}
+        fileName="${folderPath}${folderName}/${folderName}_${long}x${long}.png"
+    else
+        format=${larg}x${larg}
+        fileName="${folderPath}${folderName}/${folderName}_${larg}x${larg}.png"
+    eval convert ${imagePath} -resize ${format}! ${fileName}
+    eval chmod +x ${fileName}
+    echo "convert: create an icon '${fileName}'"
     fi
 }
 
@@ -81,9 +84,13 @@ echo -e "Check Requirements Packages:"
 checkPackage zenity               # CheckIf zenity cmd is available
 checkPackage identify imagemagick # CheckIf convert cmd from imagemagick package is available
 checkPackage convert imagemagick  # CheckIf convert cmd from imagemagick package is available
+
 echo -e "\nCreate Folder:"
 # ask a folder name while it's is empty or already taken
 while [ -e "${folderPath}${folderName}" ] || [ "${folderName}" == "" ] ;do folderName=$(askName);done
-createFolder ${folderName}
+mkdir -p "${folderPath}${folderName}/" -v
+
+echo -e "\nCreate Icon:"
 # ask for a path to an image that can be used as an icon until it is
 while [ "${imagePath}" == "" ] || isNotASupportedFormat ${imagePath};do imagePath=$(selectImage);done
+createIcon
