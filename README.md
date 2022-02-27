@@ -3,11 +3,33 @@
 This BashScript allows you to create a custom launcher for any app or command you want to launch graphically using the
 app menu or favorites bar.
 
+## About the script
+In its first version, this script will not use the following notions:
+- XDG Base Directory
+- Icon Theme
 
+Instead, it'll create one folder per launcher in the directory $HOME/.local/share/applicacions/.
+
+Each of these folders created by this script will contain:
+- An image converted to the format to use as an icon
+- A .desktop file to launch the application
+- (If necessary)the executable to launch the application
+
+## Installation
+Clone the repo
+```bash
+git clone https://github.com/alterGNU/MakeDesktopLauncher.git
+```
+
+## Requirements:
 _I'm using ubuntu 20.04.4 LTS with GNOME_
-## Requirements packages:
-- zenity
-- imagemagick
+### Image
+Before running this script, you must already have an image that you want to turn into an icon of your program.
+- This image's size must be at least 512x512
+- This image's extension must be one off these extension: .png, .wpm or svg
+### Packages (commands)
+- zenity (for `zenity` command)
+- imagemagick (for `convert` commant)
 
 # Sources
 ## Bash-Scripting
