@@ -4,12 +4,16 @@ This BashScript allows you to create a custom launcher for any app or command yo
 app menu or favorites bar.
 
 
-## Requirements:
-__I'm using ubuntu 20.04.4 LTS__
+_I'm using ubuntu 20.04.4 LTS with GNOME_
+## Requirements packages:
 - zenity
 - imagemagick
 
 # Sources
+## Bash-Scripting
+- [Advanced bash-scripting guide by@mandelCooper](https://tldp.org/LDP/abs/html/abs-guide.html)
+- [Advanced bash-scripting guide:CH24.Functions](https://tldp.org/LDP/abs/html/complexfunct.html)
+
 ## Desktop Extension Format
 ### Specifications:
 - [specifications.freedesktop.org: Desktop Entry Specification](https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html)
