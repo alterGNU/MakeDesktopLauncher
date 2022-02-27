@@ -10,8 +10,9 @@
 # ERROR14 => createFolder: folder to be created already exists
 
 # =[ VARIABLES ]====================================================================================
-path="${HOME}/.local/share/applications/"
- 
+folderPath="${HOME}/.local/share/applications/"
+folderName=""
+
 # =[ CHECK REQUIREMENT PACKAGES ]===================================================================
 function checkPackage(){
     [[ $# -lt 1 || $# -gt 2 ]] && { echo -e "ERROR12: checkPackage() call failed, take 1 or 2 arguments." ; exit 12 ; }
@@ -33,13 +34,20 @@ function checkPackage(){
 # =[ CREATE FOLDER ]================================================================================
 function createFolder(){
     [[ $# -ne 1 ]] && { echo -e "ERROR13: createFolder() call failed, take only 1 argument, the folder's name." ; exit 13 ; }
-    absPath="${path}${1}/"
-    if [ -d ${absPath} ];then
+    absolutePath="${folderPath}${1}/"
+    if [ -d ${absolutePath} ];then
         echo "Error14: a folder with the same name already exists"
         exit 14
     else
-        mkdir -p ${absPath} -v
+        mkdir -p ${absolutePath} -v
     fi
+}
+
+# -[ ASK USER FOLDER'S NAME ]-----------------------------------------------------------------------
+function askName(){
+    name=$(zenity --entry --title="Creating the launcher" --text="Enter the name of the application")
+    compliantName=$(echo "${name//[!a-zA-Z0-9]/}")
+    echo ${compliantName}
 }
 
 # ==================================================================================================
@@ -50,3 +58,6 @@ echo -e "Check Requirements Packages:"
 checkPackage zenity               # CheckIf zenity cmd is available
 checkPackage convert imagemagick  # CheckIf convert cmd from imagemagick package is available
 echo -e "\nCreate Folder:"
+# ask a folder name while it's is empty or already taken
+while [ -e "${folderPath}${folderName}" ] || [ "${folderName}" == "" ] ;do folderName=$(askName);done
+createFolder ${folderName}
