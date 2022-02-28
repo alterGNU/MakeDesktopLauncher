@@ -127,21 +127,11 @@ appOrCmd=$(zenity --list --title="Programm or Command to execute\nTwo choices:" 
 while [ "${execAppOrCmd}" == "" ];do [[ "${appOrCmd}" == "Browse folders for the executable" ]] && \
     execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=/home/)||\
     execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run") ;done
-#if [ "${appOrCmd}" == "Browse folders for the executable" ]; then
-#    execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=/home/)
-#fi
-#if [ "${appOrCmd}" == "Write the command line to run" ]; then
-#    execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run")
-#fi
 echo "Exec=\"${execAppOrCmd}\"" >> $file
 
 ## ask for categories
 #if [ "$categories" != "" ];
 #	then echo "Categories=$categories" >> $file
-#fi
-## Set iconpath
-#if [ "$iconpath" != "" ];
-#	then echo "Icon="$iconpath >> $file
 #fi
 
 exit 0
