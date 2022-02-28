@@ -5,9 +5,11 @@
 # ==================================================================================================
 
 # =[ ERRORS ]=======================================================================================
-# ERROR12 => checkPackage         : invalid number of arguments
+# ERROR12 => checkPackage : invalid number of arguments
+# ERROR13 => createIcon   : no icon converted in folder
 
 # =[ VARIABLES ]====================================================================================
+set -e  # exit when eny command fails
 folderPath="${HOME}/.local/share/applications/"
 folderName=""
 imagePath=""
@@ -41,7 +43,7 @@ function askName(){
 # -[ SELECT IMAGE ]---------------------------------------------------------------------------------
 function selectImage(){
     imagePath=$(zenity --file-selection --title="Selectionner l'icône de l'application" --filename=/home/)
-    echo \"${imagePath}\"
+    echo ${imagePath/\ /\\\ }
 }
 
 # -[ CHECK IMAGE EXTENSION ]------------------------------------------------------------------------
@@ -64,19 +66,18 @@ function createIcon(){
     larg=$(eval identify -format '%H' ${imagePath})
     iconPath="${folderPath}${folderName}/"
     if [ ${long} -gt 512 ] && [ ${larg} -gt 512 ];then
-        iconformat=512x512
+        iconFormat=512x512
         iconName="${folderName}_512x512.png"
     elif [ ${long} -lt ${larg} ];then
-        iconformat=${long}x${long}
+        iconFormat=${long}x${long}
         iconName="${folderName}_${long}x${long}.png"
     else
-        iconformat=${larg}x${larg}
+        iconFormat=${larg}x${larg}
         iconName="${folderName}_${larg}x${larg}.png"
-    iconFullName=${iconPath}${iconName}
-    eval convert ${imagePath} -resize ${iconformat}! ${iconFullName}
-    eval chmod +x ${iconFullName}
-    echo "convert: create an icon '${iconName}'"
     fi
+    iconFullName=${iconPath}${iconName}
+    eval convert ${imagePath} -resize ${iconFormat}! ${iconFullName}
+    eval chmod +x ${iconFullName}
 }
 
 # ==================================================================================================
@@ -97,6 +98,7 @@ echo -e "\nCreate Icon:"
 # ask for a path to an image that can be used as an icon until it is
 while [ "${imagePath}" == "" ] || isNotASupportedFormat ${imagePath};do imagePath=$(selectImage);done
 createIcon
+[[ -f ${iconFullName} ]] && echo "convert: create an icon '${iconFullName}'" || { echo "ERROR13: No icon was created" ; exit 13 ; }
 
 echo -e "\nCreate Desktop file:"
 # Create file
@@ -125,8 +127,8 @@ echo "Icon=${iconFullName}" >> $file
 # Ask for exec:2 choices
 appOrCmd=$(zenity --list --title="Programm or Command to execute\nTwo choices:" --column="0" "Browse folders for the executable" "Write the command line to run")
 while [ "${execAppOrCmd}" == "" ];do [[ "${appOrCmd}" == "Browse folders for the executable" ]] && \
-    execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=/home/)||\
+    execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=${HOME}/)||\
     execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run") ;done
-echo "Exec=\"${execAppOrCmd}\"" >> $file
+echo "Exec=\"${execAppOrCmd//\"/\\\"}\"" >> $file
 
 exit 0

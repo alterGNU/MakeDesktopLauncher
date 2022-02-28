@@ -6,12 +6,18 @@ app menu or favorites bar.
 ## TODO
 ### V1
 - [ ] Multiples choices (tag, categories)
-- [ ] Tests 
 - [ ] Check minimum size for icone
-- [ ] Fix:logout needed
-- [ ] Fix:sometimes no iconFullName add to the desktop file
-- [ ] Example : inception + tuto + gif
-- [ ] Example : chrome profile + tuto + gif
+- [X] ReWrite cmd line if containts quotes `{$var/"/\\"}`
+- [ ] logout needed to apply changes(with gnome `[Alt]+[F2]`, then write `r` and run...it'll restart gnome)
+- [ ] Check if Terminal=True is needed for command line
+- [ ] Create install.sh that'll add to $PATH the commande createLauncher
+- [ ] Create Cleaning function that'll clean all dir or file created if error raised while executed
+#### Examples
+- [ ] E1 : inception + tuto + gif + addImage de l'application
+- [ ] E2 : chrome profile + tuto + gif
+#### Tests/Bugs
+- [ ] Fix:`google-chrome --profile-directory=\"Profil 2\" github.com` not showing icon/not working
+- [ ] Fix: Can not cancel execution!
 ### V2
 - [ ] Make an Icone theme
 - [ ] Use XDG Directory structure and algo.
@@ -86,3 +92,7 @@ cd MakeDesktopLauncher.git && ./createLauncher.sh
 - [wikiUbuntu-fr:zenity](https://doc.ubuntu-fr.org/zenity)
 ### KDE:Kdialog
 - [develop.kde.org:Shell scripting with KDE Dialogs](https://develop.kde.org/deploy/kdialog/)
+
+## Example 2 : Google-Chrome profile
+- [launch google-chrome with command line](https://winaero.com/run-google-chrome-with-different-profiles/#toc_3)
+- [How to find your chrome profile folder](https://www.howtogeek.com/255653/how-to-find-your-chrome-profile-folder-on-windows-mac-and-linux/)
