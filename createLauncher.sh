@@ -11,6 +11,7 @@
 folderPath="${HOME}/.local/share/applications/"
 folderName=""
 imagePath=""
+iconFullName=""
 
 # =[ CHECK REQUIREMENT PACKAGES ]===================================================================
 function checkPackage(){
@@ -61,18 +62,20 @@ function isNotASupportedFormat(){
 function createIcon(){
     long=$(eval identify -format '%W' ${imagePath})
     larg=$(eval identify -format '%H' ${imagePath})
+    iconPath="${folderPath}${folderName}/"
     if [ ${long} -gt 512 ] && [ ${larg} -gt 512 ];then
-        format=512x512
-        fileName="${folderPath}${folderName}/${folderName}_512x512.png"
+        iconformat=512x512
+        iconName="${folderName}_512x512.png"
     elif [ ${long} -lt ${larg} ];then
-        format=${long}x${long}
-        fileName="${folderPath}${folderName}/${folderName}_${long}x${long}.png"
+        iconformat=${long}x${long}
+        iconName="${folderName}_${long}x${long}.png"
     else
-        format=${larg}x${larg}
-        fileName="${folderPath}${folderName}/${folderName}_${larg}x${larg}.png"
-    eval convert ${imagePath} -resize ${format}! ${fileName}
-    eval chmod +x ${fileName}
-    echo "convert: create an icon '${fileName}'"
+        iconformat=${larg}x${larg}
+        iconName="${folderName}_${larg}x${larg}.png"
+    iconFullName=${iconPath}${iconName}
+    eval convert ${imagePath} -resize ${iconformat}! ${iconFullName}
+    eval chmod +x ${iconFullName}
+    echo "convert: create an icon '${iconName}'"
     fi
 }
 
@@ -94,3 +97,51 @@ echo -e "\nCreate Icon:"
 # ask for a path to an image that can be used as an icon until it is
 while [ "${imagePath}" == "" ] || isNotASupportedFormat ${imagePath};do imagePath=$(selectImage);done
 createIcon
+
+echo -e "\nCreate Desktop file:"
+# Create file
+file="${folderPath}${folderName}/${folderName}.desktop"
+touch $file
+echo "touch: create desktop file '${file}'"
+
+# Add HEADER
+echo "[Desktop Entry]" >> $file
+
+# Ask to choose between Types
+typeApp=$(zenity --list --title="Select the Type" --text "Select the Type" --radiolist \
+    --column "Pick" --column "Answer" FALSE "Application" FALSE "Link" FALSE "Directory")
+echo "Type=${typeApp}" >> $file
+
+# Add for the name
+echo "Name=${folderName}" >> $file
+
+# Ask for comment (OPT)
+comment=$(zenity --entry --title="(OPTIONNAL):ADD some comment" --text="Tooltip for the entry, for example 'View sites on the Internet'.")
+[[ ${comment} != "" ]] && echo "Comment=${comment}" >> $file
+
+# Add icon
+echo "Icon=${iconFullName}" >> $file
+
+# Ask for exec:2 choices
+appOrCmd=$(zenity --list --title="Programm or Command to execute\nTwo choices:" --column="0" "Browse folders for the executable" "Write the command line to run")
+while [ "${execAppOrCmd}" == "" ];do [[ "${appOrCmd}" == "Browse folders for the executable" ]] && \
+    execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=/home/)||\
+    execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run") ;done
+#if [ "${appOrCmd}" == "Browse folders for the executable" ]; then
+#    execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=/home/)
+#fi
+#if [ "${appOrCmd}" == "Write the command line to run" ]; then
+#    execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run")
+#fi
+echo "Exec=\"${execAppOrCmd}\"" >> $file
+
+## ask for categories
+#if [ "$categories" != "" ];
+#	then echo "Categories=$categories" >> $file
+#fi
+## Set iconpath
+#if [ "$iconpath" != "" ];
+#	then echo "Icon="$iconpath >> $file
+#fi
+
+exit 0
