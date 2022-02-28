@@ -5,23 +5,36 @@
 # ==================================================================================================
 
 # =[ ERRORS ]=======================================================================================
+# ERROR11 => cleanup      : something goes wrong and cleanup function was called
 # ERROR12 => checkPackage : invalid number of arguments
 # ERROR13 => createIcon   : no icon converted in folder
 
 # =[ VARIABLES ]====================================================================================
 set -e  # exit when eny command fails
+trap cleanup 1 2 3 6
+
 folderPath="${HOME}/.local/share/applications/"
 folderName=""
 imagePath=""
 iconFullName=""
 
-# =[ CHECK REQUIREMENT PACKAGES ]===================================================================
+# -[ CLEANUP ]--------------------------------------------------------------------------------------
+function cleanup(){
+    echo "\nSomething goes wrong!"
+    if [ -d ${folderPath}${folderName} ];then
+        echo "removing ${folderPath}${folderName} folder"
+        rm -rf ${folderPath}${folderName}
+    fi
+    exit 11
+}
+
+# -[ CHECK REQUIREMENT PACKAGES ]-------------------------------------------------------------------
 function checkPackage(){
     [[ $# -lt 1 || $# -gt 2 ]] && { echo -e "ERROR12: checkPackage() call failed, take 1 or 2 arguments." ; exit 12 ; }
     cmd=$1
     [[ -z $2 ]] && package=$1 || package=$2
     if ! which $1 > /dev/null;then
-        echo -e "Command ${cmd} not found!Do you want to install ${package}? (y/n) \n"
+        echo -e "Command ${cmd} not found!Do you want to install ${package} with apt cmd?(y/n) \n"
         read
         if [ ${REPLY} == "y" ];then
             sudo apt install $package
