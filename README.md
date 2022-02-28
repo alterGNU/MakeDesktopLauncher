@@ -3,6 +3,18 @@
 This BashScript allows you to create a custom launcher for any app or command you want to launch graphically using the
 app menu or favorites bar.
 
+## TODO
+### V1
+- [ ] Multiples choices (tag, categories)
+- [ ] Tests 
+- [ ] Fix:logout needed
+- [ ] Fix:sometimes no iconFullName add to the desktop file
+- [ ] Example : inception + tuto + gif
+- [ ] Example : chrome profile + tuto + gif
+### V2
+- [ ] Make an Icone theme
+- [ ] Use XDG Directory structure and algo.
+
 ## About the script
 In its first version, this script will not use the following notions:
 - XDG Base Directory
@@ -35,6 +47,9 @@ Before running this script, you must already have an image that you want to turn
 - step 1: get the executable or command you want to run
 - step 2: get the image you want to turn into an icon
 - step 3: execute createLauncher.sh and then follow his instructions...:)
+```bash
+cd MakeDesktopLauncher.git && ./createLauncher.sh
+```
 
 ## Useful Commands
 - `convert -list Format` -> list of supported Format

@@ -129,9 +129,4 @@ while [ "${execAppOrCmd}" == "" ];do [[ "${appOrCmd}" == "Browse folders for the
     execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run") ;done
 echo "Exec=\"${execAppOrCmd}\"" >> $file
 
-## ask for categories
-#if [ "$categories" != "" ];
-#	then echo "Categories=$categories" >> $file
-#fi
-
 exit 0
