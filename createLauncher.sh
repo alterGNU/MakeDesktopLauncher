@@ -5,12 +5,11 @@
 # ==================================================================================================
 
 # =[ ERRORS ]=======================================================================================
-# ERROR11 => cleanup      : something goes wrong and cleanup function was called
-# ERROR12 => checkPackage : invalid number of arguments
-# ERROR13 => createIcon   : no icon converted in folder
+# ERROR11 => cleanup             : something goes wrong and cleanup function was called
+# ERROR12 => checkPackage        : invalid number of arguments
+# ERROR13 => createIcon          : no icon converted in folder
 
 # =[ VARIABLES ]====================================================================================
-set -e  # exit when eny command fails
 trap cleanup 1 2 3 6
 
 folderPath="${HOME}/.local/share/applications/"
@@ -20,13 +19,16 @@ iconFullName=""
 
 # -[ CLEANUP ]--------------------------------------------------------------------------------------
 function cleanup(){
-    echo "\nSomething goes wrong!"
-    if [ -d ${folderPath}${folderName} ];then
-        echo "removing ${folderPath}${folderName} folder"
+    echo -e "\nSomething goes wrong!"
+    if [ "${folderName}" != "" ];then
+        echo -e "removing ${folderPath}${folderName} folder"
         rm -rf ${folderPath}${folderName}
     fi
     exit 11
 }
+
+# -[ CALL CLEANUP AND EXIT ]------------------------------------------------------------------------
+function killIfLastCmdFailed(){ [[ ${?} -ne 0 ]] && kill -s SIGINT ${$} ; }
 
 # -[ CHECK REQUIREMENT PACKAGES ]-------------------------------------------------------------------
 function checkPackage(){
@@ -49,6 +51,7 @@ function checkPackage(){
 # -[ ASK USER FOLDER'S NAME ]-----------------------------------------------------------------------
 function askName(){
     name=$(zenity --entry --title="Creating the launcher" --text="Enter the name of the application")
+    killIfLastCmdFailed
     compliantName=$(echo "${name//[!a-zA-Z0-9]/}")
     echo ${compliantName}
 }
@@ -56,6 +59,7 @@ function askName(){
 # -[ SELECT IMAGE ]---------------------------------------------------------------------------------
 function selectImage(){
     imagePath=$(zenity --file-selection --title="Selectionner l'icône de l'application" --filename=/home/)
+    killIfLastCmdFailed
     echo ${imagePath/\ /\\\ }
 }
 
@@ -123,8 +127,8 @@ echo "touch: create desktop file '${file}'"
 echo "[Desktop Entry]" >> $file
 
 # Ask to choose between Types
-typeApp=$(zenity --list --title="Select the Type" --text "Select the Type" --radiolist \
-    --column "Pick" --column "Answer" FALSE "Application" FALSE "Link" FALSE "Directory")
+typeApp=$(zenity --list --title="Select the Type" --text "Select the Type" --radiolist --column "Pick" --column "Answer" TRUE "Application" FALSE "Link" FALSE "Directory")
+killIfLastCmdFailed
 echo "Type=${typeApp}" >> $file
 
 # Add for the name
@@ -132,6 +136,7 @@ echo "Name=${folderName}" >> $file
 
 # Ask for comment (OPT)
 comment=$(zenity --entry --title="(OPTIONNAL):ADD some comment" --text="Tooltip for the entry, for example 'View sites on the Internet'.")
+killIfLastCmdFailed
 [[ ${comment} != "" ]] && echo "Comment=${comment}" >> $file
 
 # Add icon
@@ -139,9 +144,8 @@ echo "Icon=${iconFullName}" >> $file
 
 # Ask for exec:2 choices
 appOrCmd=$(zenity --list --title="Programm or Command to execute\nTwo choices:" --column="0" "Browse folders for the executable" "Write the command line to run")
-while [ "${execAppOrCmd}" == "" ];do [[ "${appOrCmd}" == "Browse folders for the executable" ]] && \
-    execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=${HOME}/)||\
-    execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run") ;done
+killIfLastCmdFailed
+while [ "${execAppOrCmd}" == "" ];do [[ "${appOrCmd}" == "Browse folders for the executable" ]] && { execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=${HOME}/) ; killIfLastCmdFailed ; } || { execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run") ; killIfLastCmdFailed ; };done
 echo "Exec=\"${execAppOrCmd//\"/\\\"}\"" >> $file
 
 exit 0

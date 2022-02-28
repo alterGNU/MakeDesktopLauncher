@@ -17,8 +17,8 @@ app menu or favorites bar.
 - [ ] E2 : chrome profile + tuto + gif
 #### Tests/Bugs
 - [ ] Fix:`google-chrome --profile-directory=\"Profil 2\" github.com` not showing icon/not working
-- [ ] Fix: Can not cancel execution using zenity in a while loop
-- [ ] Fix: when zenity `Cancel` or `close` buttons works, it won't call cleanup function
+- [X] Fix: Can not cancel execution using zenity in a while loop
+- [X] Fix: when zenity `Cancel` or `close` buttons works, it won't call cleanup function
 ### V2
 - [ ] Make an Icone theme
 - [ ] Use XDG Directory structure and algo.
