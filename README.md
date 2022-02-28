@@ -7,6 +7,7 @@ app menu or favorites bar.
 ### V1
 - [ ] Multiples choices (tag, categories)
 - [ ] Tests 
+- [ ] Check minimum size for icone
 - [ ] Fix:logout needed
 - [ ] Fix:sometimes no iconFullName add to the desktop file
 - [ ] Example : inception + tuto + gif
@@ -37,7 +38,7 @@ git clone https://github.com/alterGNU/MakeDesktopLauncher.git
 _I'm using ubuntu 20.04.4 LTS with GNOME_
 ### Image
 Before running this script, you must already have an image that you want to turn into an icon of your program.
-- This image's size must be at least 512x512
+- This image's size must be at least 92x92
 - This image's extension must be one off these extension: .png, .wpm or svg
 ### Packages (commands)
 - zenity (for `zenity` command)
