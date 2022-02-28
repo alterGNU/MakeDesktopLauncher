@@ -6,8 +6,7 @@ app menu or favorites bar.
 ## TODO
 ### V1
 - [ ] Multiples choices (tag, categories)
-- [ ] Check minimum size for icone
-- [X] ReWrite cmd line if containts quotes `{$var/"/\\"}`
+- [ ] Check minimum size for icon
 - [ ] logout needed to apply changes(with gnome `[Alt]+[F2]`, then write `r` and run...it'll restart gnome)
 - [ ] Check if Terminal=True is needed for command line
 - [ ] Create install.sh that'll add to $PATH the commande createLauncher
@@ -17,10 +16,8 @@ app menu or favorites bar.
 - [ ] E2 : chrome profile + tuto + gif
 #### Tests/Bugs
 - [ ] Fix:`google-chrome --profile-directory=\"Profil 2\" github.com` not showing icon/not working
-- [X] Fix: Can not cancel execution using zenity in a while loop
-- [X] Fix: when zenity `Cancel` or `close` buttons works, it won't call cleanup function
 ### V2
-- [ ] Make an Icone theme
+- [ ] Make an icon theme
 - [ ] Use XDG Directory structure and algo.
 
 ## About the script
@@ -60,6 +57,7 @@ cd MakeDesktopLauncher.git && ./createLauncher.sh
 
 ## Useful Commands
 - `convert -list Format` -> list of supported Format
+- `[Alt]+[F2]`-> open gnome prompt then `r` -> restart gnome
 
 # Sources
 ## Bash-Scripting
