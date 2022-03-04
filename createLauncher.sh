@@ -148,4 +148,8 @@ killIfLastCmdFailed
 while [ "${execAppOrCmd}" == "" ];do [[ "${appOrCmd}" == "Browse folders for the executable" ]] && { execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=${HOME}/) ; killIfLastCmdFailed ; } || { execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run") ; killIfLastCmdFailed ; };done
 echo "Exec=\"${execAppOrCmd//\"/\\\"}\"" >> $file
 
+# Si gnome, restart poour afficher l'icone
+echo ${XDG_CURRENT_DESKTOP}
+[[ "${XDG_CURRENT_DESKTOP}" =~ "GNOME" ]] && busctl --user call org.gnome.Shell /org/gnome/Shell org.gnome.Shell Eval s 'Meta.restart("Restarting Gnome…")'
+
 exit 0

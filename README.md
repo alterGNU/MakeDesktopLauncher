@@ -5,16 +5,17 @@ app menu or favorites bar.
 
 ## TODO
 ### V1
+- [ ] Check if Terminal=True is needed for command line
 - [ ] Multiples choices (tag, categories)
 - [ ] Check minimum size for icon
-- [ ] logout needed to apply changes(with gnome `[Alt]+[F2]`, then write `r` and run...it'll restart gnome)
-- [ ] Check if Terminal=True is needed for command line
-- [ ] Create install.sh that'll add to $PATH the commande createLauncher
+- [X] logout needed to apply changes(with gnome `[Alt]+[F2]`, then write `r` and run...it'll restart gnome)
 - [ ] Create Cleaning function that'll clean all dir or file created if error raised while executed
 #### Examples
 - [ ] E1 : inception + tuto + gif + addImage de l'application
+      Create install.sh that'll add to $PATH the commande createLauncher
 - [ ] E2 : chrome profile + tuto + gif
 #### Tests/Bugs
+- [ ] FIX: E1 tourne en boucle quand on lui passe son propre script
 - [ ] Fix:`google-chrome --profile-directory=\"Profil 2\" github.com` not showing icon/not working
 ### V2
 - [ ] Make an icon theme
@@ -60,6 +61,10 @@ cd MakeDesktopLauncher.git && ./createLauncher.sh
 - `[Alt]+[F2]`-> open gnome prompt then `r` -> restart gnome
 
 # Sources
+## GNOME
+- [Wiki ubuntu:GNOME Shell](https://doc.ubuntu-fr.org/gnome-shell)
+- [man busctl](https://man.archlinux.org/man/busctl.1.en)
+
 ## Bash-Scripting
 - [Advanced bash-scripting guide by@mandelCooper](https://tldp.org/LDP/abs/html/abs-guide.html)
 - [Advanced bash-scripting guide:CH24.Functions](https://tldp.org/LDP/abs/html/complexfunct.html)
