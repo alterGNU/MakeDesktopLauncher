@@ -1,14 +1,12 @@
 # MakeDesktopLauncher
 
 This BashScript allows you to create a custom launcher for any app or command you want to launch graphically using the
-app menu or favorites bar.
+app menu or favorites bar. It also allows you to link to folders or web pages.
 
 ## TODO
 ### V1
-- [ ] Check if Terminal=True is needed for command line
+- [ ] Cleaning code: main : 147-186
 - [ ] Multiples choices (tag, categories)
-- [ ] Check minimum size for icon
-- [X] logout needed to apply changes(with gnome `[Alt]+[F2]`, then write `r` and run...it'll restart gnome)
 - [ ] Create Cleaning function that'll clean all dir or file created if error raised while executed
 #### Examples
 - [ ] E1 : inception + tuto + gif + addImage de l'application
@@ -16,7 +14,7 @@ app menu or favorites bar.
 - [ ] E2 : chrome profile + tuto + gif
 #### Tests/Bugs
 - [ ] FIX: E1 tourne en boucle quand on lui passe son propre script
-- [ ] Fix:`google-chrome --profile-directory=\"Profil 2\" github.com` not showing icon/not working
+- [ ] TEST : KDE ! (find a way to restart too)
 ### V2
 - [ ] Make an icon theme
 - [ ] Use XDG Directory structure and algo.
@@ -45,6 +43,7 @@ Before running this script, you must already have an image that you want to turn
 - This image's size must be at least 92x92
 - This image's extension must be one off these extension: .png, .wpm or svg
 ### Packages (commands)
+- xdg-utils (for `wdg-open` command)
 - zenity (for `zenity` command)
 - imagemagick (for `identify` and `convert` commands)
 
@@ -71,6 +70,7 @@ cd MakeDesktopLauncher.git && ./createLauncher.sh
 - [Pb:path with space doesn't work](https://stackoverflow.com/questions/589149/bash-script-to-cd-to-directory-with-spaces-in-pathname)
 - [Exit when any command fails](https://intoli.com/blog/exit-on-errors-in-bash-scripts/#:~:text=Exit%20When%20Any%20Command%20Fails,command%20with%20the%20%2De%20option.&text=Putting%20this%20at%20the%20top,a%20non%2Dzero%20exit%20code.)
 - [bash trap command](https://phoenixnap.com/kb/bash-trap-command)
+- [get current script directory path](https://dirask.com/posts/Bash-get-current-script-directory-path-1X9E8D)
 
 ## Desktop Extension Format
 ### Specifications:

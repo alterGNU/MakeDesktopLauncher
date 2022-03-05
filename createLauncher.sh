@@ -9,14 +9,19 @@
 # ERROR12 => checkPackage        : invalid number of arguments
 # ERROR13 => createIcon          : no icon converted in folder
 
-# =[ VARIABLES ]====================================================================================
+# =[ SETTINGS ]=====================================================================================
 trap cleanup 1 2 3 6
 
+# =[ VARIABLES ]====================================================================================
+localisation=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 folderPath="${HOME}/.local/share/applications/"
 folderName=""
 imagePath=""
 iconFullName=""
+link=""
+execAppOrCmd=""
 
+# =[ FUNCTIONS ]====================================================================================
 # -[ CLEANUP ]--------------------------------------------------------------------------------------
 function cleanup(){
     echo -e "\nSomething goes wrong!"
@@ -60,7 +65,8 @@ function askName(){
 function selectImage(){
     imagePath=$(zenity --file-selection --title="Selectionner l'icône de l'application" --filename=/home/)
     killIfLastCmdFailed
-    echo ${imagePath/\ /\\\ }
+    imagePath=$(sed "s/\ /\\\ /g" <<< ${imagePath})
+    echo ${imagePath}
 }
 
 # -[ CHECK IMAGE EXTENSION ]------------------------------------------------------------------------
@@ -101,22 +107,21 @@ function createIcon(){
 # MAIN
 # ==================================================================================================
 
+# -[ CHECKS ]---------------------------------------------------------------------------------------
 echo -e "Check Requirements Packages:"
+checkPackage xdg-open xdg-utils   # CheckIf xdg-open cmd from xdg-utils package is available
 checkPackage zenity               # CheckIf zenity cmd is available
 checkPackage identify imagemagick # CheckIf convert cmd from imagemagick package is available
 checkPackage convert imagemagick  # CheckIf convert cmd from imagemagick package is available
 
+# -[ CREATE FOLDER ]--------------------------------------------------------------------------------
 echo -e "\nCreate Folder:"
 # ask a folder name while it's is empty or already taken
 while [ -e "${folderPath}${folderName}" ] || [ "${folderName}" == "" ] ;do folderName=$(askName);done
 mkdir -p "${folderPath}${folderName}/" -v
 
-echo -e "\nCreate Icon:"
-# ask for a path to an image that can be used as an icon until it is
-while [ "${imagePath}" == "" ] || isNotASupportedFormat ${imagePath};do imagePath=$(selectImage);done
-createIcon
-[[ -f ${iconFullName} ]] && echo "convert: create an icon '${iconFullName}'" || { echo "ERROR13: No icon was created" ; exit 13 ; }
 
+# -[ CREATE FILE.DESKTOP ]--------------------------------------------------------------------------
 echo -e "\nCreate Desktop file:"
 # Create file
 file="${folderPath}${folderName}/${folderName}.desktop"
@@ -124,14 +129,14 @@ touch $file
 echo "touch: create desktop file '${file}'"
 
 # Add HEADER
-echo "[Desktop Entry]" >> $file
+[[ "${XDG_CURRENT_DESKTOP}" =~ "GNOME" ]] && echo "[Desktop Entry]" >> $file || echo "[KDE Desktop Entry]" >> $file
 
 # Ask to choose between Types
-typeApp=$(zenity --list --title="Select the Type" --text "Select the Type" --radiolist --column "Pick" --column "Answer" TRUE "Application" FALSE "Link" FALSE "Directory")
+linkType=$(zenity --list --title="Select the Type" --text "You want to create a(n):" --radiolist --column "Pick" --column "Answer" TRUE "Application launcher" FALSE "Web Link" FALSE "Directory Link")
 killIfLastCmdFailed
-echo "Type=${typeApp}" >> $file
+echo "Type=Application" >> $file
 
-# Add for the name
+# Add Name
 echo "Name=${folderName}" >> $file
 
 # Ask for comment (OPT)
@@ -139,17 +144,50 @@ comment=$(zenity --entry --title="(OPTIONNAL):ADD some comment" --text="Tooltip 
 killIfLastCmdFailed
 [[ ${comment} != "" ]] && echo "Comment=${comment}" >> $file
 
-# Add icon
+# Convert image->icon
+if [[ "${linkType}" != "Application launcher" ]];then
+    question="Do you want to use a particular icon for this shortcut or do you want to use the default icons?"
+    speIcon=$(zenity --list --title="Particular or Default Icon:" --text "${question}" --radiolist --column "Pick" --column "Answer" TRUE "Default Icon" FALSE "Search this PC for a particular image.")
+    killIfLastCmdFailed
+    if [[ "${speIcon}" == "Default Icon" ]];then
+    [[ "${linkType}" == "Web Link" ]] && imagePath="${localisation}/webIcon.png" || imagePath="${localisation}/folderIcon.png"
+    else
+        # ask for a path to an image that can be used as an icon until it is
+        while [ "${imagePath}" == "" ] || isNotASupportedFormat ${imagePath};do imagePath=$(selectImage);done
+    fi
+else
+    # ask for a path to an image that can be used as an icon until it is
+    while [ "${imagePath}" == "" ] || isNotASupportedFormat ${imagePath};do imagePath=$(selectImage);done
+    echo -e "\nCreate Icon:"
+fi
+createIcon
+[[ -f ${iconFullName} ]] && echo "convert: create an icon '${iconFullName}'" || { echo "ERROR13: No icon was created" ; exit 13 ; }
 echo "Icon=${iconFullName}" >> $file
 
-# Ask for exec:2 choices
-appOrCmd=$(zenity --list --title="Programm or Command to execute\nTwo choices:" --column="0" "Browse folders for the executable" "Write the command line to run")
-killIfLastCmdFailed
-while [ "${execAppOrCmd}" == "" ];do [[ "${appOrCmd}" == "Browse folders for the executable" ]] && { execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=${HOME}/) ; killIfLastCmdFailed ; } || { execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run") ; killIfLastCmdFailed ; };done
-echo "Exec=\"${execAppOrCmd//\"/\\\"}\"" >> $file
+# Ask for exec:
+if [[ "${linkType}" == "Web Link" ]];then
+    link=$(zenity --entry --title="Create a web-link using URL" --text="Paste your URL here")
+    killIfLastCmdFailed
+elif [[ "${linkType}" == "Directory Link" ]];then
+    link=$(zenity --file-selection --title="Create folder link by selecting one" --filename=${HOME}/ --directory)
+    killIfLastCmdFailed
+else
+    appOrCmd=$(zenity --list --title="Your application will launch a Programm or it'll execute a Command" --column="Two choices:" "Browse folders for the executable" "Write the command line to run")
+    killIfLastCmdFailed
+    while [ "${execAppOrCmd}" == "" ];do 
+        if [[ "${appOrCmd}" == "Browse folders for the executable" ]];then
+            execAppOrCmd=$(zenity --file-selection --title="Browse folders for the executable" --filename=${HOME}/) 
+        else
+            execAppOrCmd=$(zenity --entry --title="Write the command line to run" --text="Write the command line to run")
+        killIfLastCmdFailed ;
+        fi
+    done
+fi
+
+[[ "${link}" != "" ]] && echo "Exec=sh -c \"xdg-open '${link}'\"" >> $file
+[[ "${execAppOrCmd}" != "" ]] && echo "Exec=sh -c \"${execAppOrCmd}\"" >> $file
 
 # Si gnome, restart poour afficher l'icone
-echo ${XDG_CURRENT_DESKTOP}
 [[ "${XDG_CURRENT_DESKTOP}" =~ "GNOME" ]] && busctl --user call org.gnome.Shell /org/gnome/Shell org.gnome.Shell Eval s 'Meta.restart("Restarting Gnome…")'
 
 exit 0
